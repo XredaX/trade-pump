@@ -2,6 +2,7 @@ from telethon import TelegramClient, events
 import re
 from ticker_rules import rules
 from binance.client import Client
+import time
 
 Pkey = 'JQXJRxtaJXpzbpudJUWhIYodTz6RsOzJ8l6yjPN7GD4Bi1o37J5rtpwIGZNkRS0b'
 Skey = 'NpZ73iF1dZjs1tg7eNSRXsEwF6JYItWy3JFeJAqzsWokuuJlE8si51udFPK9B3HH'
@@ -55,6 +56,8 @@ async def handlmsg(event):
                             quantity = quantity[0]+"."+quantity1
                             quantity = float(quantity)
                             client.order_market_buy(symbol=coin, quantity=quantity)
+
+                            time.sleep(3)
 
                             client.order_market_sell(symbol=coin, quantity=quantity)
 
