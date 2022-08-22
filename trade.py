@@ -14,7 +14,7 @@ client = Client(api_key=Pkey, api_secret=Skey)
 
 @client1.on(events.NewMessage)
 async def handlmsg(event):
-    try:
+    # try:
         chat_id = event.chat_id
         msg = event.raw_text
         file1 = ""
@@ -65,8 +65,8 @@ async def handlmsg(event):
                                 file1 = file1[0].replace(file1[0], coin)
                                 f1.write(file1)
                                 f1.close()
-    except:
-        pass
+   # except:
+    #    pass
 
 client1.start()
 client1.run_until_disconnected()
