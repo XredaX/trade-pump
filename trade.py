@@ -57,7 +57,7 @@ async def handlmsg(event):
                             quantity = float(quantity)
                             client.order_market_buy(symbol=coin, quantity=quantity)
                             
-                            time.sleep(15)
+                            time.sleep(5)
 
                             client.order_market_sell(symbol=coin, quantity=quantity)
 
