@@ -14,32 +14,26 @@ client = Client(api_key=Pkey, api_secret=Skey)
 
 @client1.on(events.NewMessage)
 async def handlmsg(event):
-    # try:
+    try:
         chat_id = event.chat_id
         msg = event.raw_text
         file1 = ""
-        if chat_id == -1001165902042:
+        if chat_id == -1001516609917:
             coin = ""
             res = msg.split()
             for r in res:
                 cleanString = re.sub('\W+','', r).upper()
-                if re.search("USDT", cleanString):
-                    for t in rules:
-                        if cleanString == t:
-                            coin = cleanString
-                            break
-                else:
-                    cleanString = cleanString+"USDT"
-                    for t in rules:
-                        if cleanString == t:
-                            coin = cleanString
-                            break
+                cleanString = cleanString + "BTC"
+                for t in rules:
+                    if cleanString == t:
+                        coin = cleanString
+                        break
             if coin != "":
                 with open('database.txt') as f:
                     file1 = f.readlines()
                     f.close()
                     if file1[0] != coin:
-                        balance = client.get_asset_balance(asset = "USDT")
+                        balance = client.get_asset_balance(asset = "BTC")
                         balance = float(balance["free"])
                         usdt_amount = balance
                         if usdt_amount > rules[coin][4]:
@@ -56,17 +50,19 @@ async def handlmsg(event):
                             quantity = quantity[0]+"."+quantity1
                             quantity = float(quantity)
                             client.order_market_buy(symbol=coin, quantity=quantity)
-                            
-                            time.sleep(5)
+
+
+                            time.sleep(3)
 
                             client.order_market_sell(symbol=coin, quantity=quantity)
+
 
                             with open('database.txt', 'w') as f1:
                                 file1 = file1[0].replace(file1[0], coin)
                                 f1.write(file1)
                                 f1.close()
-   # except:
-    #    pass
+    except:
+        pass
 
 client1.start()
 client1.run_until_disconnected()
