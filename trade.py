@@ -12,13 +12,21 @@ client1 = TelegramClient('reda', api_id, api_hash)
 
 client = Client(api_key=Pkey, api_secret=Skey)
 
+def get_change(current, previous):
+    if current == previous:
+        return 100.0
+    try:
+        return (abs(current - previous) / previous) * 100.0
+    except ZeroDivisionError:
+        return 0
+
 @client1.on(events.NewMessage)
 async def handlmsg(event):
     try:
         chat_id = event.chat_id
         msg = event.raw_text
         file1 = ""
-        if chat_id == -1001516609917:
+        if chat_id == -1001377022329:
             coin = ""
             res = msg.split()
             for r in res:
@@ -35,6 +43,7 @@ async def handlmsg(event):
                     if file1[0] != coin:
                         balance = client.get_asset_balance(asset = "BTC")
                         balance = float(balance["free"])
+                        balance = 0.97 * float(balance)
                         usdt_amount = balance
                         if usdt_amount > rules[coin][4]:
                             float_format = "%."+str(rules[coin][0])+"f"
@@ -42,21 +51,19 @@ async def handlmsg(event):
                             avg_price = client.get_avg_price(symbol = coin)
                             avg_price = float(avg_price["price"])
                             quantity = float(usdt_amount) / avg_price
-                            quantity = str(quantity)
-                            quantity = quantity.split(".")
-                            quantity1 = ""
-                            for q in range(int(rules[coin][3])):
-                                quantity1 += quantity[1][q]
-                            quantity = quantity[0]+"."+quantity1
+                            quantity = round(quantity, rules[coin][3])
                             quantity = float(quantity)
-                            client.order_market_buy(symbol=coin, quantity=quantity)
-
-
-                            time.sleep(3)
-
-                            client.order_market_sell(symbol=coin, quantity=quantity)
-
-
+                            buyor = client.order_market_buy(symbol=coin, quantity=quantity)
+                            time.sleep(5)
+                            sellor = client.order_market_sell(symbol=coin, quantity=quantity)
+                            per = get_change(float(sellor['fills'][0]['price']), float(buyor['fills'][0]['price']))
+                            per = round(per, 3)
+                            if float(sellor['fills'][0]['price']) > float(buyor['fills'][0]['price']):
+                                per = '+ '+ str(per) + '%'
+                            else:
+                                per = '- '+ str(per) + '%'
+                            msg = '#'+str(coin)+'\n\nbuy at price '+str(buyor['fills'][0]['price'])+'\n\nsell at price '+str(sellor['fills'][0]['price'])+'\n\n'+str(per)
+                            await client1.send_message(-1001302391646, msg)
                             with open('database.txt', 'w') as f1:
                                 file1 = file1[0].replace(file1[0], coin)
                                 f1.write(file1)
