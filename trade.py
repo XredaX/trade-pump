@@ -54,7 +54,7 @@ async def handlmsg(event):
                             quantity = round(quantity, rules[coin][3])
                             quantity = float(quantity)
                             buyor = client.order_market_buy(symbol=coin, quantity=quantity)
-                            time.sleep(5)
+                            time.sleep(10)
                             sellor = client.order_market_sell(symbol=coin, quantity=quantity)
                             per = get_change(float(sellor['fills'][0]['price']), float(buyor['fills'][0]['price']))
                             per = round(per, 3)
